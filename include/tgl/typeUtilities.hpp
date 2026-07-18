@@ -19,6 +19,8 @@
 
 namespace tgl
 {
+    using hash_t = std::size_t;
+
     template <typename T>
     struct real_type
     {

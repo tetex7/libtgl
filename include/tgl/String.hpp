@@ -51,6 +51,8 @@ namespace tgl
         explicit String(const std::string& std_str);
         String(const String& str);
 
+        explicit String(char c);
+
         explicit String(const std::string_view& str_view);
 
         template <std::size_t _size>
@@ -80,6 +82,8 @@ namespace tgl
 
         const char& operator[](std::size_t index) const;
         char& operator[](std::size_t index);
+
+        bool isEmpty() const;
 
         String operator+=(const String& str) const;
         String operator+(const String& str) const;
@@ -151,9 +155,9 @@ namespace tgl
         // Utility statics
 
         template <typename... Args>
-        static inline String format(const std::format_string<Args...> string, Args&&... args)
+        static inline String format(const std::format_string<Args...> format_string, Args&&... args)
         {
-            return String(std::vformat(string.get(), std::make_format_args(args...)));
+            return String(std::vformat(format_string.get(), std::make_format_args(args...)));
         }
 
         template <typename T> requires std::constructible_from<String, T>

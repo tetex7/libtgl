@@ -47,6 +47,9 @@ namespace tgl
     String::String(const String& str)
     : length(str.length), data(str.getBackingBuffer().copy()){}
 
+    String::String(char c)
+    : length(1), data({c, '\0'}) {}
+
     String::String(const std::string_view& str_view)
     : length(str_view.length()), data(str_view.data(), length + 1){}
 
@@ -129,6 +132,11 @@ namespace tgl
     char& String::operator[](std::size_t index)
     {
         return getCharacterReference(index);
+    }
+
+    bool String::isEmpty() const
+    {
+        return this->getLength() == 0;
     }
 
     String String::operator+=(const String& str) const

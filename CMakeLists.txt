@@ -6,7 +6,7 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 #
 
-cmake_minimum_required(VERSION 4.2)
+cmake_minimum_required(VERSION 4.3.3)
 project(libtgl LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 26)
@@ -73,3 +73,22 @@ add_subdirectory(tgl_runtime)
 add_executable(tester tester.cpp)
 enable_warnings(tester)
 target_link_libraries(tester PUBLIC libtgl)
+
+
+if(DEFINED VCPKG_TOOLCHAIN)
+    enable_testing()
+
+    find_package(GTest CONFIG REQUIRED)
+
+    add_executable(mainTest
+            test/TglStringTests.cpp
+    )
+
+    target_link_libraries(mainTest PRIVATE libtgl)
+
+    target_link_libraries(mainTest PRIVATE GTest::gtest GTest::gtest_main GTest::gmock GTest::gmock_main)
+
+
+    add_test(AllTestsInMain mainTest)
+    enable_warnings(mainTest)
+endif ()

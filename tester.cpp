@@ -21,6 +21,8 @@ int main()
     tgl::String test = "ttty";
     test = test.append("fff");
 
+    volatile tgl::String test2 = "";
+
     tgl::String g = "hf,bg,jh,bj";
 
     for (const tgl::String& s : test.split('y'))

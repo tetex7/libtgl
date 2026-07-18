@@ -1,2 +1,5 @@
 cmake-build-*/
 .idea/
+vcpkg_installed/
+vcpkg/
+/vcpkg/vcpkg.part
