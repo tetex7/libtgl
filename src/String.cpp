@@ -45,7 +45,7 @@ namespace tgl
     : length(std_str.length()), data(std_str.c_str(), length + 1){}
 
     String::String(const String& str)
-    : length(str.length), data(str.getBackingBuffer().copy()){}
+    : Object(str), length(str.length), data(str.getBackingBuffer().copy()){}
 
     String::String(char c)
     : length(1), data({c, '\0'}) {}
@@ -58,14 +58,14 @@ namespace tgl
 
     String& String::operator=(const String& b)
     {
-        if (this != &b) return *this;
+        if (this == &b) return *this;
 
         char* const buffer = new char[b.getLength() + 1];
 
         std::memset(buffer, 0, b.getLength() + 1);
         std::memcpy(buffer, b.getCString(), b.getLength());
 
-        this->data.set(buffer, length+1);
+        this->data.set(buffer, b.getLength()+1);
         this->length = b.getLength();
 
         return *this;
@@ -179,7 +179,7 @@ namespace tgl
 
         for (char& c : str)
         {
-            c = std::tolower(c);
+            c = std::tolower(static_cast<unsigned char>(c));
         }
 
         return str;
@@ -191,7 +191,7 @@ namespace tgl
 
         for (char& c : str)
         {
-            c = std::toupper(c);
+            c = std::toupper(static_cast<unsigned char>(c));
         }
 
         return str;
@@ -269,13 +269,12 @@ namespace tgl
     {
         std::vector<String> result;
         std::vector<char> temp;
+        temp.reserve(this->getLength()+1);
 
         const auto close_out = [&]() -> void {
             temp.push_back(0);
-            result.push_back(String(temp.data()));
+            result.emplace_back(temp.data());
         };
-
-        const std::size_t num_do_split = this->getNumberOfCharacter(delimiter);
 
         std::size_t num_split = 0;
         for (const char& c : *this)
@@ -293,7 +292,7 @@ namespace tgl
 
         }
 
-        if (num_split == 0 || num_split != num_do_split)
+        if (num_split == 0 || !temp.empty())
         {
             close_out();
         }
@@ -307,7 +306,7 @@ namespace tgl
 
         std::size_t num = 0;
 
-        for (std::size_t i = real_offset; i < real_offset; i++)
+        for (std::size_t i = real_offset; i < length; i++)
         {
             if (c == this->getCharacterReference(i))
             {

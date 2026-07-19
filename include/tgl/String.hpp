@@ -28,7 +28,7 @@
 
 namespace tgl
 {
-    class TGL_API String final : public IIterable<char>
+    class TGL_API String final : public Object, public IIterable<char>
     {
     private:
         std::size_t length;
@@ -83,7 +83,7 @@ namespace tgl
         const char& operator[](std::size_t index) const;
         char& operator[](std::size_t index);
 
-        bool isEmpty() const;
+        [[nodiscard]] bool isEmpty() const;
 
         String operator+=(const String& str) const;
         String operator+(const String& str) const;
@@ -109,7 +109,7 @@ namespace tgl
 
         [[nodiscard]] String trim() const;
 
-        std::vector<String> split(char delimiter) const;
+        [[nodiscard]] std::vector<String> split(char delimiter) const;
 
         [[nodiscard]] std::size_t getNumberOfCharacter(char c, std::size_t offset = npos) const;
 
@@ -125,29 +125,13 @@ namespace tgl
         template<std::integral T>
         std::optional<T> toNumber(int base = 10) const
         {
-            try
-            {
-                T temp{};
-                char* last = nullptr;
-                if constexpr (std::is_unsigned_v<T>)
-                {
-                    temp = static_cast<T>(std::strtoull(this->getCString(), &last, base));
-                }
-                else
-                {
-                    temp = static_cast<T>(std::strtoll(this->getCString(), &last, base));
-                }
-
-                if (last == this->getCString())
-                {
-                    return std::nullopt;
-                }
-                return temp;
-            }
-            catch (std::exception& e)
+            T temp{};
+            std::from_chars_result r = std::from_chars(this->begin(), this->end(), temp, base);
+            if (r.ec == std::errc::result_out_of_range || r.ec == std::errc::invalid_argument)
             {
                 return std::nullopt;
             }
+            return temp;
         }
 
         ~String() override = default;

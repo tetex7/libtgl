@@ -62,3 +62,60 @@ TEST(TglStringTests, formatPassThrough)
 
     ASSERT_EQ(str, "a,b,c");
 }
+
+TEST(TglStringTests, upperCase)
+{
+    const tgl::String str = "abc";
+
+    ASSERT_EQ(str, "abc");
+
+    const tgl::String up = str.toUpperCase();
+    ASSERT_EQ(up, "ABC");
+}
+
+TEST(TglStringTests, lowerCase)
+{
+    const tgl::String str = "ABC";
+    ASSERT_EQ(str, "ABC");
+
+    const tgl::String low = str.toLowerCase();
+
+    ASSERT_EQ(low, "abc");
+}
+
+TEST(TglStringTests, startsWith)
+{
+    const tgl::String starter = "(test chars)";
+
+    const tgl::String str = "(test chars)test";
+
+    ASSERT_TRUE(str.startsWith(starter));
+}
+
+TEST(TglStringTests, endsWith)
+{
+    const tgl::String ender = "(test chars)";
+
+    const tgl::String str = "test(test chars)";
+
+    ASSERT_TRUE(str.endsWith(ender));
+}
+
+TEST(TglStringTests, toNumber)
+{
+    const tgl::String str = "6969 test";
+
+    const auto no  = str.toNumber<int>();
+
+    ASSERT_TRUE(no.has_value());
+    ASSERT_EQ(no.value(), 6969);
+}
+
+TEST(TglStringTests, toNumberFailState)
+{
+    const tgl::String str = "test";
+
+    const auto no = str.toNumber<int>();
+
+    ASSERT_FALSE(no.has_value());
+}
