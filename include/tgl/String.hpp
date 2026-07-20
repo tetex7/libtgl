@@ -111,6 +111,8 @@ namespace tgl
 
         [[nodiscard]] std::vector<String> split(char delimiter) const;
 
+        [[nodiscard]] std::vector<String> cliSplit() const;
+
         [[nodiscard]] std::size_t getNumberOfCharacter(char c, std::size_t offset = npos) const;
 
         [[nodiscard]] std::size_t getHash() const override;
@@ -135,22 +137,22 @@ namespace tgl
 
         ~String() override = default;
 
+        // ReSharper disable once CppNonExplicitConversionOperator
+        operator std::filesystem::path() const;
+
         // Utility statics
 
         template <typename... Args>
-        static inline String format(const std::format_string<Args...> format_string, Args&&... args)
+        static inline String format(const std::string_view& format_string, Args&&... args)
         {
-            return String(std::vformat(format_string.get(), std::make_format_args(args...)));
+            return String(std::vformat(format_string, std::make_format_args(args...)));
         }
 
-        template <typename T> requires std::constructible_from<String, T>
-        static String of(T&& value)
+        template <typename... Args> requires std::constructible_from<String, Args...>
+        static String of(Args&&... value)
         {
-            return String(std::forward<T>(value));
+            return String(std::forward<Args>(value)...);
         }
-
-        // ReSharper disable once CppNonExplicitConversionOperator
-        operator std::filesystem::path() const;
     };
 
     namespace literals

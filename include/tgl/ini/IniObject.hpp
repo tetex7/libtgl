@@ -28,10 +28,17 @@ namespace tgl::ini
 
         void set(const IniIdentifier& name, IniField& value);
 
-        template <isIniObjectConpat T>
-        ini_field_type_selector_t<T> get(const IniIdentifier& name)
+        template <RealType T> requires isIniObjectConpat<T>
+        std::optional<ini_field_type_selector_t<T>> get(const IniIdentifier& name)
         {
-            return contents[name];
+            auto field = contents.at(name);
+
+            if (field.getType() == getIniObjectType<T>())
+            {
+                return static_cast<ini_field_type_selector_t<T>>(field);
+            }
+
+            return std::nullopt;
         }
 
         ~IniObject() override = default;

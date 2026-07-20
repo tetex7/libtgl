@@ -207,15 +207,6 @@ namespace tgl
         return this->getView().ends_with(b.getView());
     }
 
-    //String String::trim() const
-    //{
-    //    std::unique_ptr<char[]> buffer(new char[length + 1]);
-
-    //    std::memset(buffer.get(), 0, length + 1);
-    //    std::memcpy(buffer.get(), data.get(), length);
-    //    return String(std::move(buffer), length);
-    //}
-
     const char* String::getCString() const
     {
         return data.get();
@@ -265,7 +256,7 @@ namespace tgl
         return String(data.get() + start, end - start);
     }
 
-    std::vector<String> String::split(char delimiter) const
+    std::vector<String> String::split(const char delimiter) const
     {
         std::vector<String> result;
         std::vector<char> temp;
@@ -289,7 +280,61 @@ namespace tgl
             {
                 temp.push_back(c);
             }
+        }
 
+        if (num_split == 0 || !temp.empty())
+        {
+            close_out();
+        }
+
+        return result;
+    }
+
+    std::vector<String> String::cliSplit() const
+    {
+        std::vector<String> result;
+        std::vector<char> temp;
+        temp.reserve(this->getLength()+1);
+
+        bool quotes = false;
+        bool char_escape = false;
+        std::size_t num_split = 0;
+
+        const auto close_out = [&]() -> void {
+            temp.push_back(0);
+            result.emplace_back(temp.data());
+        };
+
+        for (const char& c : *this)
+        {
+            if (c == '\\' && !char_escape)
+            {
+                char_escape = true;
+                continue;
+            }
+
+            if (char_escape)
+            {
+                temp.push_back(c);
+                char_escape = false;
+                continue;
+            }
+
+            if ((c == '\'') || (c == '\"') || (c == '`'))
+            {
+                quotes = !quotes;
+            }
+
+            if (std::isspace(c) && !quotes)
+            {
+                close_out();
+                temp.clear();
+                num_split++;
+            }
+            else
+            {
+                temp.push_back(c);
+            }
         }
 
         if (num_split == 0 || !temp.empty())

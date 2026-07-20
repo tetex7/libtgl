@@ -11,6 +11,7 @@
 //
 
 #include <gtest/gtest.h>
+#include <print>
 
 #include "tgl/String.hpp"
 
@@ -38,7 +39,7 @@ TEST(TglStringTests, splitTwoSplitEdgeCase)
 {
     const char* splitter = "a,b";
 
-    const auto strs = tgl::String(splitter).split(',');
+    const auto strs = tgl::String::of(splitter).split(',');
 
     ASSERT_EQ(strs.size(), 2);
     ASSERT_EQ(strs[0], "a");
@@ -53,6 +54,18 @@ TEST(TglStringTests, splitNoSplitEdgeCase)
 
     ASSERT_EQ(strs.size(), 1);
     ASSERT_EQ(strs[0], splitter);
+}
+
+TEST(TglStringTests, cliSplit)
+{
+    const char* splitter = R"(a "b\" c" d)";
+
+    const auto strs = tgl::String::of(splitter).cliSplit();
+
+    ASSERT_EQ(strs.size(), 3);
+    ASSERT_EQ(strs[0], "a");
+    ASSERT_EQ(strs[1], "\"b\" c\"");
+    ASSERT_EQ(strs[2], "d");
 }
 
 

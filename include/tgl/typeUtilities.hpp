@@ -41,8 +41,19 @@ namespace tgl
 
     template <typename T>
     concept Pointer = std::is_pointer_v<T>;
-}
 
+    template <bool condition, std::integral auto a, std::integral auto b>
+    using value_if = std::conditional_t<
+        condition,
+        std::integral_constant<decltype(a), a>,
+        std::integral_constant<decltype(b), b>
+    >;
+
+    template <bool condition, auto a, auto b>
+    inline constexpr auto value_if_v = value_if<condition, a, b>::value;
+}
+static_assert(tgl::value_if_v<true, 42, 7> == 42);
+static_assert(tgl::value_if_v<false, 42, 7> == 7);
 static_assert(!tgl::RealType<const int>);
 static_assert(!tgl::RealType<volatile int>);
 static_assert(!tgl::RealType<int&>);
