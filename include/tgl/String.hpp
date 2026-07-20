@@ -126,8 +126,7 @@ namespace tgl
         std::optional<T> toNumber(int base = 10) const
         {
             T temp{};
-            std::from_chars_result r = std::from_chars(this->begin(), this->end(), temp, base);
-            if (r.ec == std::errc::result_out_of_range || r.ec == std::errc::invalid_argument)
+            if (std::from_chars_result r = std::from_chars(this->begin(), this->end(), temp, base); r.ec == std::errc::result_out_of_range || r.ec == std::errc::invalid_argument)
             {
                 return std::nullopt;
             }

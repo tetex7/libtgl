@@ -39,17 +39,17 @@ namespace tgl::oom
         ObjectIdentifier(ObjectIdentifier&&) noexcept = default;
         ObjectIdentifier& operator=(ObjectIdentifier&&) noexcept = default;
 
-        std::array<std::uint8_t, 6> getByteArray() const;
+        [[nodiscard]] std::array<std::uint8_t, 6> getByteArray() const;
 
-        std::span<const std::uint8_t> getByteView() const;
+        [[nodiscard]] std::span<const std::uint8_t> getByteView() const;
 
-        std::string asString() const;
+        [[nodiscard]] std::string asString() const;
 
-        std::uint16_t getPrefix() const;
+        [[nodiscard]] std::uint16_t getPrefix() const;
 
-        std::uint16_t getBody() const;
+        [[nodiscard]] std::uint16_t getBody() const;
 
-        std::uint16_t getSuffix() const;
+        [[nodiscard]] std::uint16_t getSuffix() const;
 
         bool operator==(const ObjectIdentifier& b) const;
         bool operator!=(const ObjectIdentifier& b) const;

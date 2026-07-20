@@ -16,6 +16,8 @@
 #include <tgl/dynacast.hpp>
 #include <tgl/BadCastException.hpp>
 
+#include "tgl/unsafe/DynamicObject.hpp"
+
 int main()
 {
     tgl::String test = "ttty";

@@ -47,6 +47,39 @@ namespace tgl
         {
             return static_cast<const To&>(from);
         }
+
+        /**
+         * @brief This call is extremely dangerous Only use when absolutely needed 
+         */
+        template<DynacastTarget From>
+        inline std::span<const uint8_t> uncheckedByteCast(const From& from)
+        {
+            return std::span<const uint8_t>(std::bit_cast<const uint8_t*>(&from), sizeof(From));
+        }
+    }
+
+    template<DynacastTarget To, DynacastTarget From>
+    inline std::expected<std::reference_wrapper<To>, BadCastException> exp_dynacast(From& from)
+    {
+        if constexpr (std::same_as<To, From>)
+            return from;
+
+        if (To* ptr = dynamic_cast<To*>(&from))
+            return *ptr;
+
+        return std::unexpected{BadCastException(typeid(from), typeid(To))};
+    }
+
+    template<DynacastTarget To, DynacastTarget From>
+    inline std::expected<std::reference_wrapper<const To>, BadCastException> exp_dynacast(const From& from)
+    {
+        if constexpr (std::same_as<To, From>)
+            return from;
+
+        if (const To* ptr = dynamic_cast<const To*>(&from))
+            return *ptr;
+
+        return std::unexpected{BadCastException(typeid(from), typeid(To))};
     }
 
     template<DynacastTarget To, DynacastTarget From>
@@ -55,10 +88,13 @@ namespace tgl
         if constexpr (std::same_as<To, From>)
             return from;
 
-        if (To* ptr = dynamic_cast<To*>(&from))
-            return *ptr;
+        auto exp = exp_dynacast<To, From>(from);
 
-        throw BadCastException(typeid(from), typeid(To));
+        if (exp.has_value())
+        {
+            return exp.value();
+        }
+        throw exp.error();
     }
 
     template<DynacastTarget To, DynacastTarget From>
@@ -67,39 +103,13 @@ namespace tgl
         if constexpr (std::same_as<To, From>)
             return from;
 
-        if (const To* ptr = dynamic_cast<const To*>(&from))
-            return *ptr;
+        auto exp = exp_dynacast<To, From>(from);
 
-        throw BadCastException(typeid(from), typeid(To));
-    }
-
-
-    template<DynacastTarget To, DynacastTarget From>
-    inline std::expected<std::reference_wrapper<To>, BadCastException> exp_dynacast(From& from)
-    {
-        try
+        if (exp.has_value())
         {
-            To& to = dynacast<To, From>(from);
-            return to;
+            return exp.value();
         }
-        catch (BadCastException& e)
-        {
-            return std::unexpected{e};
-        }
-    }
-
-    template<DynacastTarget To, DynacastTarget From>
-    inline std::expected<std::reference_wrapper<const To>, BadCastException> exp_dynacast(const From& from)
-    {
-        try
-        {
-            const To& to = dynacast<To, From>(from);
-            return to;
-        }
-        catch (BadCastException& e)
-        {
-            return std::unexpected{e};
-        }
+        throw exp.error();
     }
 
     template<DynacastTarget To, DynacastTarget From>

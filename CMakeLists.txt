@@ -56,6 +56,10 @@ add_library(libtgl SHARED
         include/tgl/ini/IniObjectType.hpp
         src/ini/IniFile.cpp
         include/tgl/typeUtilities.hpp
+        include/tgl/ini/IniField.hpp
+        src/ini/IniField.cpp
+        include/tgl/ini/IniObject.hpp
+        include/tgl/unsafe/DynamicObject.hpp
 )
 
 if (NOT WIN32)
@@ -82,6 +86,7 @@ if(DEFINED VCPKG_TOOLCHAIN)
 
     add_executable(mainTest
             test/TglStringTests.cpp
+            test/TglDynacastTests.cpp
     )
 
     target_link_libraries(mainTest PRIVATE libtgl)

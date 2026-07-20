@@ -34,7 +34,7 @@ namespace tgl
         using reference = T&;
         using const_reference = const T&;
 
-        using rref = value_type&&;
+        using move_reference = value_type&&;
 
         using offset_t = size_t;
     protected:
