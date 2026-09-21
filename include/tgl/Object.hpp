@@ -19,16 +19,13 @@
 #include <functional>
 #include <format>
 #include <tgl/export_defs.hpp>
+#include <tgl/typeUtilities.hpp>
 #include <tgl/oom/ObjectIdentifier.hpp>
 
 namespace tgl
 {
-    class Object;
     class String;
 
-    template <typename T>
-    concept TglObject = std::is_base_of_v<Object, std::remove_cvref_t<T>>;
-    
     class TGL_API Object
     {
     private:

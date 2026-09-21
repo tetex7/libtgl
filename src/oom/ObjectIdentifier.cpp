@@ -14,6 +14,7 @@
 #include <format>
 #include <tgl/oom/ObjectIdentifier.hpp>
 #include <random>
+#include <cstring>
 
 static std::mt19937& rng()
 {

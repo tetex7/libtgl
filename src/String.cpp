@@ -262,7 +262,7 @@ namespace tgl
         std::vector<char> temp;
         temp.reserve(this->getLength()+1);
 
-        const auto close_out = [&]() -> void {
+        const FunctionSignature<void()> auto close_out = [&]() -> void {
             temp.push_back(0);
             result.emplace_back(temp.data());
         };
@@ -300,7 +300,7 @@ namespace tgl
         bool char_escape = false;
         std::size_t num_split = 0;
 
-        const auto close_out = [&]() -> void {
+        const FunctionSignature<void()> auto close_out = [&]() -> void {
             temp.push_back(0);
             result.emplace_back(temp.data());
         };
@@ -397,10 +397,9 @@ namespace tgl
             return false;
         }
 
-        String t_a = this->toLowerCase();
-        String t_b = b.toLowerCase();
-
-        return t_a.equals(t_b);
+        return this->sideCompare(b, [](char a, char b) -> bool {
+            return std::tolower(static_cast<unsigned char>(a)) == std::tolower(static_cast<unsigned char>(b));
+        });
     }
 
     String::operator std::filesystem::path() const

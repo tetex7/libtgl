@@ -60,7 +60,7 @@ namespace tgl::unsafe
         DynamicFixedWidthBuffer(const std::initializer_list<value_type>& list)
         : size(list.size()), data(new value_type[list.size()])
         {
-            std::memcpy(this->get(), list.data(), this->size * sizeof(value_type));
+            std::memcpy(this->get(), list.begin(), this->size * sizeof(value_type));
         }
 
         DynamicFixedWidthBuffer(const_pointer data, size_type size)
@@ -84,10 +84,10 @@ namespace tgl::unsafe
         : size(0), data(nullptr) {}
 
         // ReSharper disable once CppNonExplicitConvertingConstructor
-        explicit DynamicFixedWidthBuffer(nullptr_t)
+        explicit DynamicFixedWidthBuffer(std::nullptr_t)
         : size(0), data(nullptr) {}
 
-        DynamicFixedWidthBuffer(nullptr_t, size_type) = delete;
+        DynamicFixedWidthBuffer(std::nullptr_t, size_type) = delete;
 
         explicit DynamicFixedWidthBuffer(size_type size, value_type initializer)
         requires FundamentalIntegerType<value_type>

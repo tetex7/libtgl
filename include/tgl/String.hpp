@@ -28,6 +28,26 @@
 
 namespace tgl
 {
+    /*class small_string
+    {
+        [[maybe_unused]] std::uint8_t buffer[std::max(sizeof(unsafe::DynamicFixedWidthBuffer<char>), sizeof(char[100]))];
+        [[maybe_unused]] unsafe::DynamicFixedWidthBuffer<char>* dny_buff;
+        [[maybe_unused]] char* f;
+
+    private:
+        small_string()
+        {
+            unsafe::DynamicFixedWidthBuffer<char>* buff = new (buffer) unsafe::DynamicFixedWidthBuffer<char>();
+            dny_buff = buff;
+            f = nullptr;
+            delete buff;
+
+            char* c = new (buffer) char[100];
+            f = c;
+
+        }
+    };*/
+
     class TGL_API String final : public Object, public IIterable<char>
     {
     private:
@@ -118,6 +138,20 @@ namespace tgl
         [[nodiscard]] std::size_t getHash() const override;
 
         [[nodiscard]] bool equals(const Object& b) const override;
+
+        template <FunctionSignature<bool(char, char)> C>
+        bool sideCompare(const String& b, C&& callable) const
+        {
+            if (b.getLength() != this->getLength())
+                return false;
+
+            for (std::size_t i = 0; i < this->getLength(); i++)
+            {
+                if (std::invoke(callable, this->getCharacterReference(i), b.getCharacterReference(i)) == false)
+                    return false;
+            }
+            return true;
+        }
 
         bool operator==(const char* b) const;
         bool operator!=(const char* b) const;

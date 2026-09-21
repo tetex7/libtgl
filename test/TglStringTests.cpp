@@ -124,6 +124,19 @@ TEST(TglStringTests, toNumber)
     ASSERT_EQ(no.value(), 6969);
 }
 
+TEST(TglStringTests, sideCompare)
+{
+    const tgl::String str = "test";
+
+    ASSERT_FALSE(str.sideCompare("tett", [](char a, char b) -> bool {
+        return a == b;
+    }));
+
+    ASSERT_TRUE(str.sideCompare("test", [](char a, char b) -> bool {
+        return a == b;
+    }));
+}
+
 TEST(TglStringTests, toNumberFailState)
 {
     const tgl::String str = "test";

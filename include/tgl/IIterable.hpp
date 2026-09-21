@@ -21,7 +21,7 @@
 namespace  tgl
 {
     template<typename T>
-    class TGL_API IIterable
+    class TGL_API IIterable : public IInterface
     {
     protected:
         IIterable() = default;
@@ -34,7 +34,7 @@ namespace  tgl
 
         [[nodiscard]] virtual std::size_t getLength() const = 0;
 
-        virtual ~IIterable() = default;
+        ~IIterable() override = default;
     };
 }
 
