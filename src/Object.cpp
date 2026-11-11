@@ -12,14 +12,30 @@
 
 #include "tgl/Object.hpp"
 #include "tgl/String.hpp"
+#include "tgl/dynacast.hpp"
 
+#include <cxxabi.h>
 namespace tgl
 {
-    Object::Object(const Object&){}
-
-    const oom::ObjectIdentifier& Object::getObjectID() const
+    std::string Object::getGoodTypeName() const
     {
-        return this->identifier;
+#ifndef _WIN32
+        int status = -4; // Initialize to an unknown error status
+
+        // Pass NULL for output_buffer so __cxa_demangle allocates memory for us
+        char* demangled = abi::__cxa_demangle(this->getTypeInfo().name(), nullptr, nullptr, &status);
+
+        if (status == 0 && demangled != nullptr) {
+            std::string result(demangled);
+            std::free(demangled); // Free the memory allocated by __cxa_demangle
+            return result;
+        }
+
+        // Return original string if demangling fails
+        return this->getTypeInfo().name();
+#else
+        return this->getTypeInfo().name();
+#endif
     }
 
     const std::type_info& Object::getTypeInfo() const
@@ -29,12 +45,16 @@ namespace tgl
 
     std::string Object::toStdString() const
     {
+        if (instanceOf<String>(*this))
+        {
+            return unsafe::uncheckedCast<String>(*this).asStdString();
+        }
         return this->toString().asStdString();
     }
 
     String Object::toString() const
     {
-        return String(std::format("{}@{:p}", identifier, std::bit_cast<void*>(this)));
+        return String(std::format("{}@{:p}", this->getGoodTypeName(), std::bit_cast<void*>(this)));
     }
 
     std::size_t Object::getHash() const
@@ -55,11 +75,5 @@ namespace tgl
     bool Object::operator!=(const Object& b) const
     {
         return !this->equals(b);
-    }
-
-    Object& Object::operator=(Object&& other) noexcept
-    {
-        this->identifier = std::move(other.identifier);
-        return *this;
     }
 }

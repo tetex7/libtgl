@@ -26,6 +26,8 @@
 #include <tgl/unsafe/DynamicFixedWidthBuffer.hpp>
 #include <tgl/export_defs.hpp>
 
+#include "IRecord.hpp"
+
 namespace tgl
 {
     /*class small_string
@@ -48,7 +50,7 @@ namespace tgl
         }
     };*/
 
-    class TGL_API String final : public Object, public IIterable<char>
+    class TGL_API String final : public Object, public IIterable<char>, public IRecord
     {
     private:
         std::size_t length;
@@ -56,6 +58,8 @@ namespace tgl
 
         //A convenience constructor to make things cheaper
         String(unsafe::DynamicFixedWidthBuffer<char>&& buff, std::size_t length) noexcept;
+
+        explicit String(const std::span<const std::uint8_t>& bytes);
 
         static bool cmpHelper(const String& a, const String& b);
     public:
@@ -86,6 +90,8 @@ namespace tgl
 
         String& operator=(const String& b);
         String& operator=(String&& b) noexcept;
+
+        [[nodiscard]] std::vector<uint8_t> toBytes() const override;
 
         [[nodiscard]] unsafe::DynamicFixedWidthBuffer<char>& getBackingBuffer();
 
@@ -183,7 +189,7 @@ namespace tgl
         }
 
         template <typename... Args> requires std::constructible_from<String, Args...>
-        static String of(Args&&... value)
+        static inline String of(Args&&... value)
         {
             return String(std::forward<Args>(value)...);
         }

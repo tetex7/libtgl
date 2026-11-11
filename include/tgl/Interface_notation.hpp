@@ -16,7 +16,7 @@
 #define LIBTGL_INTERFACE_NOTATION_HPP
 #include <tgl/Object.hpp>
 
-#define TGL_INTERFACE_DECLARE(name) class name : public tgl::Object { \
+#define TGL_INTERFACE_DECLARE(name) class name { \
     public: \
     virtual ~##name() = default; \
     private:

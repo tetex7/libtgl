@@ -16,6 +16,7 @@
 
 #include <type_traits>
 #include <concepts>
+#include <optional>
 
 namespace tgl
 {
@@ -23,8 +24,10 @@ namespace tgl
 
     struct IInterface { virtual ~IInterface() = default; };
     struct IAbstract { virtual ~IAbstract() = default; };
+    struct IRecord;
 
-
+    template <typename T> requires std::same_as<T, std::remove_reference_t<T>>
+    using OptionalReference = std::optional<std::reference_wrapper<T>>;
 
     template <typename T>
     struct real_type
@@ -53,10 +56,24 @@ namespace tgl
     concept TglObject = std::is_base_of_v<Object, real_type_t<T>>;
 
     template<typename T>
-    concept TglInterface = std::is_base_of_v<IInterface, real_type_t<T>> && !std::is_base_of_v<Object, real_type_t<T>>;
+    concept TglInterface = std::is_base_of_v<IInterface, real_type_t<T>> && !std::is_base_of_v<Object, real_type_t<T>>
+    && std::is_abstract_v<T>;
 
     template <typename T>
-    concept TglAbstract = std::is_base_of_v<IAbstract, real_type_t<T>> && !std::is_base_of_v<Object, real_type_t<T>>;
+    concept TglAbstract = std::is_base_of_v<IAbstract, real_type_t<T>> && !std::is_base_of_v<Object, real_type_t<T>>
+    && std::is_abstract_v<T>;
+
+    template <typename A, typename B>
+    constexpr bool instanceOf(const B&)
+    {
+        return std::derived_from<A, real_type_t<B>> || std::same_as<A, real_type_t<B>>;
+    }
+
+    template <typename A, typename B>
+    consteval bool instanceOf()
+    {
+        return std::derived_from<A, real_type_t<A>> || std::same_as<A, real_type_t<B>>;
+    }
 
 
     template <bool condition, std::integral auto a, std::integral auto b>

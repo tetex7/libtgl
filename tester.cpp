@@ -3,7 +3,7 @@
  *
  * This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ * file, You bn mvccan obtain one at https://mozilla.org/MPL/2.0/.
  */
 
 //
@@ -22,6 +22,8 @@ int main()
 {
     tgl::String test = "ttty";
     test = test.append("fff");
+
+    std::println("{}", typeid(std::add_pointer_t<char>).name());
 
     volatile tgl::String test2 = "";
 
@@ -52,6 +54,4 @@ int main()
     {
         std::println("{}", e.getMessage());
     }
-
-    std::println("{}", tgl::Object());
 }

@@ -30,7 +30,7 @@
 namespace tgl
 {
     template <typename T>
-    concept DynacastTarget = RealType<T> && TglObject<T>;
+    concept DynacastTarget = RealType<T> && (TglObject<T> || TglAbstract<T> || TglInterface<T>);
 
     namespace unsafe
     {
@@ -51,7 +51,7 @@ namespace tgl
         /**
          * @brief This call is extremely dangerous Only use when absolutely needed 
          */
-        template<DynacastTarget From>
+        template<DynacastTarget From> requires (!std::is_base_of_v<IRecord, From>)
         inline std::span<const uint8_t> uncheckedByteCast(const From& from)
         {
             return std::span<const uint8_t>(std::bit_cast<const uint8_t*>(&from), sizeof(From));

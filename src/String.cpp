@@ -21,6 +21,19 @@ namespace tgl
     String::String(unsafe::DynamicFixedWidthBuffer<char>&& buff, std::size_t length) noexcept
         : length(length), data(std::move(buff)) {}
 
+    String::String(const std::span<const std::uint8_t>& bytes) : IRecord(bytes),
+    length(bytes.size()-1),
+    data(bytes.size())
+    {
+
+        std::memcpy(this->data.get(), bytes.data(), length)+1;
+        if (*bytes.end() != '\0')
+        {
+            data[length] = '\0';
+        }
+
+    }
+
     bool String::cmpHelper(const String& a, const String& b)
     {
         if (a.getLength() != b.getLength())
@@ -76,6 +89,11 @@ namespace tgl
         this->data = std::move(b.data);
         this->length = b.getLength();
         return *this;
+    }
+
+    std::vector<uint8_t> String::toBytes() const
+    {
+        return std::vector(reinterpret_cast<const std::uint8_t*>(this->begin()), reinterpret_cast<const std::uint8_t*>(this->end()));
     }
 
     unsafe::DynamicFixedWidthBuffer<char>& String::getBackingBuffer()

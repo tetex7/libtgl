@@ -29,15 +29,12 @@ namespace tgl
     class TGL_API Object
     {
     private:
-        oom::ObjectIdentifier identifier;
+        [[nodiscard]] std::string getGoodTypeName() const;
     public:
         template <typename T>
         constexpr static inline bool is_object = TglObject<T>;
 
         Object() = default;
-        Object(const Object&);
-
-        [[nodiscard]] const oom::ObjectIdentifier& getObjectID() const;
 
         [[nodiscard]] const std::type_info& getTypeInfo() const;
 
@@ -51,8 +48,6 @@ namespace tgl
 
         bool operator==(const Object& b) const;
         bool operator!=(const Object& b) const;
-
-        Object& operator=(Object&& other) noexcept;
 
         virtual ~Object() = default;
     };

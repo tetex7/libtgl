@@ -60,6 +60,8 @@ add_library(libtgl SHARED
         src/ini/IniField.cpp
         include/tgl/ini/IniObject.hpp
         include/tgl/unsafe/DynamicObject.hpp
+        include/tgl/StreamLikeReader.hpp
+        include/tgl/IRecord.hpp
 )
 
 if (NOT WIN32)

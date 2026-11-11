@@ -46,7 +46,7 @@ namespace tgl::unsafe
         {
             if constexpr (FundamentalIntegerType<value_type>)
             {
-                std::memset(this->get(), 0, this->size * sizeof(value_type));
+                std::memset(this->get(), 0, sizeof(value_type)*this->size);
             }
         }
 
@@ -60,14 +60,14 @@ namespace tgl::unsafe
         DynamicFixedWidthBuffer(const std::initializer_list<value_type>& list)
         : size(list.size()), data(new value_type[list.size()])
         {
-            std::memcpy(this->get(), list.begin(), this->size * sizeof(value_type));
+            std::memcpy(this->get(), list.begin(), sizeof(value_type)*this->size);
         }
 
         DynamicFixedWidthBuffer(const_pointer data, size_type size)
         requires FundamentalIntegerType<value_type>
         : size(size), data(new value_type[size])
         {
-            std::memcpy(this->get(), data, this->size * sizeof(value_type));
+            std::memcpy(this->get(), data, sizeof(value_type)*this->size);
         }
 
         DynamicFixedWidthBuffer(const_pointer start, const_pointer end)

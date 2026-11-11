@@ -17,6 +17,8 @@
 #include <cstddef>
 #include <functional>
 
+#include <tgl/typeUtilities.hpp>
+
 namespace tgl
 {
     /**
@@ -24,7 +26,7 @@ namespace tgl
      * @tparam T
      */
     template <typename T>
-    class IStream
+    class IStream : public IInterface
     {
     public:
         using value_type = T;
@@ -48,10 +50,8 @@ namespace tgl
         virtual reference peek() = 0;
         virtual const_reference peek() const = 0;
 
-        virtual
 
-
-        virtual ~IStream() = default;
+        ~IStream() override = default;
     };
 }
 
